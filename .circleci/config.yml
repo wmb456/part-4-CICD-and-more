@@ -66,7 +66,6 @@ jobs:
           name: Back-end build
           command: |
             cd backend
-            env
             npm install
             npm run build
       - save_cache:
@@ -96,6 +95,8 @@ jobs:
           name: Test backend
           command: |
             cd backend
+            ls ~/
+            ls /home/circleci/project/frontend/node_modules
             ls node_modules
             npm run test:cov
   scan-frontend:
