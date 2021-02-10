@@ -61,7 +61,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backend-build-fresh]
       - run:
           name: Back-end build
           command: |
@@ -70,7 +70,7 @@ jobs:
             npm run build
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-build
+          key: backend-build-fresh
 
   test-frontend:
     docker:
@@ -90,14 +90,11 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backend-build-fresh]
       - run:
           name: Test backend
           command: |
             cd backend
-            ls ~/
-            ls /home/circleci/project/frontend/node_modules
-            ls node_modules
             npm run test:cov
   scan-frontend:
     docker:
