@@ -7,16 +7,16 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # ToDo: check name
-      workflowID:
+      WORKFLOW_ID:
         type: string
     steps:
       - run:
           name: Destroy environments
           when: on_fail
+          # force exit code 0 so both commands will be executed (in case one stack exists and the other not...)
           command: |
-            # Your code here
-            exit 1
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${WORKFLOW_ID:0:7}" || :
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${WORKFLOW_ID:0:7}" || :
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -141,6 +141,7 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
+            exit 0
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople projectenv=backend \
@@ -149,6 +150,7 @@ jobs:
       - run:
           name: Ensure front-end infrastructure exist
           command: |
+            exit 0
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople projectenv=frontend \
@@ -157,13 +159,15 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text >> project/.circleci/ansible/inventory.txt
-            cat project/.circleci/ansible/inventory.txt
+            echo "[web]" > ~/inventory.txt
+            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text >> ~/inventory.txt
+            cat ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+            - inventory.txt
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   configure-infrastructure:
     docker:
