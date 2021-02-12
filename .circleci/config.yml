@@ -15,8 +15,9 @@ commands:
           when: on_fail
           # force exit code 0 so both commands will be executed (in case one stack exists and the other not...)
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${WORKFLOW_ID:0:7}" || :
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${WORKFLOW_ID:0:7}" || :
+            echo "delete stacks... (term: $TERM)"
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${WORKFLOW_ID:0:7}" || true
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${WORKFLOW_ID:0:7}" || true
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -159,9 +160,9 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            yum -y install tar
             echo "[web]" > ~/inventory.txt
-            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text >> ~/inventory.txt
-            cat ~/inventory.txt
+            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}' >> ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
