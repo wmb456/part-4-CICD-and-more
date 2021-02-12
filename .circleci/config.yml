@@ -183,6 +183,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible all -m ping -i /tmp/workspace/inventory.txt
             exit 1
       - destroy-environment:
