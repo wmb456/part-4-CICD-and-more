@@ -172,22 +172,25 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: amazon/aws-cli:2.1.22
+      - image: python:3.9-alpine3.13
     steps:
       - checkout
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - add_ssh_keys:
+          fingerprints:
+            - "49:88:cd:72:f1:95:52:31:35:91:d3:04:96:59:16:a7"
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            pip install ansible:2.9
       - run:
           name: Configure server
           command: |
-            # Your code here
+            ansible -m ping -i /tmp/workspace/inventory.txt
             exit 1
-      # Here's where you will add some code to rollback on failure      
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   run-migrations:
     docker:
