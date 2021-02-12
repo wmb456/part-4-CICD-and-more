@@ -183,7 +183,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            ansible -m ping -i /tmp/workspace/inventory.txt
+            ansible all -m ping -i /tmp/workspace/inventory.txt
             exit 1
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
