@@ -172,7 +172,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.9-alpine3.13
+      - image: willhallonline/ansible:2.9-alpine
     steps:
       - checkout
       - add_ssh_keys:
@@ -180,10 +180,6 @@ jobs:
             - "49:88:cd:72:f1:95:52:31:35:91:d3:04:96:59:16:a7"
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Install dependencies
-          command: |
-            pip install 'ansible==2.9'
       - run:
           name: Configure server
           command: |
