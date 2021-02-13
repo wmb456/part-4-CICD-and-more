@@ -225,8 +225,11 @@ jobs:
           name: Install dependencies (f*ck you amazon for forcing me to waste so much time)
           command: |
             yum -y install tar gzip
+            touch ~/.bashrc
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+            echo "activate nvm..."
             . ~/.nvm/nvm.sh
+            echo "install node and npm"
             nvm install node
       - restore_cache:
           keys: [backend-build-fresh]
