@@ -222,19 +222,28 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Install dependencies (f*ck you amazon for forcing me to waste so much time)
           command: |
-            # your code here
+            yum -y install tar gzip
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+            . ~/.nvm/nvm.sh
+            nvm install node
+      - restore_cache:
+          keys: [backend-build-fresh]
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Get backend url
           command: |
-            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}')
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            cd frontend
+            npm run build
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
+            exit 1
       # Here's where you will add some code to rollback on failure      
                     
   deploy-backend:
