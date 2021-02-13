@@ -1,6 +1,11 @@
 ---
 - name: "copy application files"
   become: true
+  file:
+    path: /var/lib/udapeople
+    state: directory
+    owner: ubuntu
+    mode: u=rwX,g=rx,o=rx
   unarchive:
     src: /tmp/backend-dist.tar.gz
     dest: /var/lib/udapeople/
