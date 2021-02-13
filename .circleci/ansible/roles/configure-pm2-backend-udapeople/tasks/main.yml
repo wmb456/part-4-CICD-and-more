@@ -1,0 +1,19 @@
+---
+- name: "setup persistent udapeople backend environment variables."
+  become: true
+  ansible.builtin.template:
+    src: environment.j2
+    dest: /etc/environment
+    owner: root
+    group: root
+    mode: '0644'
+  environment:
+    ENVIRONMENT: production
+    TYPEORM_CONNECTION: postgres
+    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
+    TYPEORM_HOST: "{{ TYPEORM_HOST }}"
+    TYPEORM_PORT: "{{ TYPEORM_PORT }}"
+    TYPEORM_USERNAME: "{{ TYPEORM_USERNAME }}"
+    TYPEORM_PASSWORD: "{{ TYPEORM_PASSWORD }}"
+    TYPEORM_DATABASE: "{{ TYPEORM_DATABASE }}"
+  
