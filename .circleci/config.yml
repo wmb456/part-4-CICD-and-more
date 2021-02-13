@@ -231,7 +231,7 @@ jobs:
             echo "install node and npm"
             nvm install node
       - restore_cache:
-          keys: [backend-build-fresh]
+          keys: [frontend-build-fresh]
       - run:
           name: Get backend url
           command: |
