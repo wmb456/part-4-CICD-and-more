@@ -236,11 +236,14 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}')
-            export API_URL="http://${BACKEND_IP}:3030"
+            echo "export BACKEND_IP=${BACKEND_IP}" >> $BASH_ENV
+            echo "export API_URL=http://${BACKEND_IP}:3030" >> $BASH_ENV
+            source $BASH_ENV
             echo "API_URL: ${API_URL}"
       - run: 
           nam: run final frontend build - back in URL
           command: |
+            source $BASH_ENV
             echo "API_URL: ${API_URL}"
             . ~/.nvm/nvm.sh
             cd frontend
