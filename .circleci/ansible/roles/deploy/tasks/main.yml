@@ -1,0 +1,9 @@
+---
+- name: "copy application files"
+  become: true
+  copy:
+    src: ../../backend/dist/
+    dest: /var/lib/udapeople/
+    owner: ubuntu
+    mode: u=rw,g=r,o=r
+  
