@@ -208,7 +208,7 @@ jobs:
           name: Send migration results to memstash
           when: always
           command: |
-            if grep -q /tmp/migrations.log "has been executed successfully" ; then
+            if grep -q "has been executed successfully" /tmp/migrations.log ; then
               curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             else
               curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
