@@ -237,18 +237,25 @@ jobs:
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}')
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
+            echo "API_URL: ${API_URL}"
+      - run: 
+          nam: run final frontend build - back in URL
+          command: |
+            echo "API_URL: ${API_URL}"
             . ~/.nvm/nvm.sh
             cd frontend
             export NODE_ENV=development
             npm install
             npm run build
-            ls
       - run:
           name: Deploy frontend objects
           command: |
-            exit 1
-      # Here's where you will add some code to rollback on failure      
+            cd frontend
+            aws s3 cp dist s3://udapeople-c101d96/ --recursive
+            # XXX CHANGE BACK
+            #aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
                     
   deploy-backend:
     docker:
