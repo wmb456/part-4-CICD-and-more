@@ -281,6 +281,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i /tmp/workspace/inventory.txt  .circleci/ansible/deploy-backend.yml 
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
