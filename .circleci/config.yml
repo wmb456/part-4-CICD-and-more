@@ -200,6 +200,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            cd backend
             npm run migrations | tee /tmp/migrations.log
       - run:
           name: Send migration results to memstash
