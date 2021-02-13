@@ -225,7 +225,6 @@ jobs:
           name: Install dependencies (f*ck you amazon for forcing me to waste so much time)
           command: |
             yum -y install tar gzip
-            touch ~/.bashrc
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
             echo "activate nvm..."
             . ~/.nvm/nvm.sh
@@ -233,14 +232,13 @@ jobs:
             nvm install node
       - restore_cache:
           keys: [backend-build-fresh]
-      - attach_workspace:
-          at: /tmp/workspace
       - run:
           name: Get backend url
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}')
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            . ~/.nvm/nvm.sh
             cd frontend
             npm run build
       - run:
