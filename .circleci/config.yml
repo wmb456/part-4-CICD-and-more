@@ -221,6 +221,8 @@ jobs:
       - image: amazon/aws-cli:2.1.22
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build-fresh]
       - run:
           name: Install dependencies (f*ck you amazon for forcing me to waste so much time)
           command: |
@@ -230,8 +232,6 @@ jobs:
             . ~/.nvm/nvm.sh
             echo "install node and npm"
             nvm install node
-      - restore_cache:
-          keys: [frontend-build-fresh]
       - run:
           name: Get backend url
           command: |
@@ -240,7 +240,10 @@ jobs:
             echo "${API_URL}"
             . ~/.nvm/nvm.sh
             cd frontend
+            export NODE_ENV=development
+            npm install
             npm run build
+            ls
       - run:
           name: Deploy frontend objects
           command: |
