@@ -187,6 +187,7 @@ jobs:
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
             cd .circleci/ansible
+            exit 0
             ansible-playbook -i /tmp/workspace/inventory.txt  configure-server.yml -e 'TYPEORM_HOST=${TYPEORM_HOST} TYPEORM_DATABASE=${TYPEORM_DATABASE} TYPEORM_PORT=${TYPEORM_PORT} TYPEORM_USERNAME=${TYPEORM_USERNAME} TYPEORM_PASSWORD=${TYPEORM_PASSWORD}'
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
@@ -195,19 +196,22 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # Checkout code from git
+      - checkout
       - run:
           name: Run migrations
           command: |
-            # Your code here
-            exit 1
+            npm run migrations | tee /tmp/migrations.log
       - run:
           name: Send migration results to memstash
+          when: always
           command: |
-            # Your code here
-            exit 1
-     # Here's where you will add some code to rollback on failure      
-
+            if grep -q /tmp/migrations.log "has been executed successfully" ; then
+              curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "1" https://api.memstash.io/values/udapeople_migration_okay
+            else
+              curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "0" https://api.memstash.io/values/udapeople_migration_okay
+            fi
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
   deploy-frontend:
     docker:
       - image: amazon/aws-cli:2.1.22
