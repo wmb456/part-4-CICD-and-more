@@ -278,11 +278,10 @@ jobs:
             export NODE_ENV=development
             npm install
             npm run build
-            ls dist
       - run:
           name: Deploy backend
           command: |
-            # your code here
+            ansible-playbook -i /tmp/workspace/inventory.txt  .circleci/ansible/deploy-backend.yml 
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
