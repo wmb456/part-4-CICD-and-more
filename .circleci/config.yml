@@ -271,13 +271,14 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: install dependencies
+          name: install dependencies and run final build
           command: |
             apk add --update nodejs nodejs-npm
             cd backend
             export NODE_ENV=development
             npm install
             npm run build
+            tar czvf /tmp/backend-dist.tar.gz -C dist .
       - run:
           name: Deploy backend
           command: |
