@@ -188,7 +188,7 @@ jobs:
             export ANSIBLE_HOST_KEY_CHECKING=False
             cd .circleci/ansible
             exit 0
-            ansible-playbook -i /tmp/workspace/inventory.txt  configure-server.yml -e 'TYPEORM_HOST=${TYPEORM_HOST} TYPEORM_DATABASE=${TYPEORM_DATABASE} TYPEORM_PORT=${TYPEORM_PORT} TYPEORM_USERNAME=${TYPEORM_USERNAME} TYPEORM_PASSWORD=${TYPEORM_PASSWORD}'
+            ansible-playbook -i /tmp/workspace/inventory.txt  configure-server.yml -e "TYPEORM_HOST=${TYPEORM_HOST} TYPEORM_DATABASE=${TYPEORM_DATABASE} TYPEORM_PORT=${TYPEORM_PORT} TYPEORM_USERNAME=${TYPEORM_USERNAME} TYPEORM_PASSWORD=${TYPEORM_PASSWORD}"
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
