@@ -292,12 +292,12 @@ jobs:
       - image: amazon/aws-cli:2.1.22
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            yum -y install tar gzip
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Get backend url
           command: |
