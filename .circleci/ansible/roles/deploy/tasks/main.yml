@@ -5,12 +5,42 @@
     path: /var/lib/udapeople
     state: directory
     owner: ubuntu
-    mode: u=rwX,g=rx,o=rx
+    group: ubuntu
+    mode: u=rwx,g=rx,o=rx
 - name: "copy application files"
   become: true
   unarchive:
     src: /tmp/backend-dist.tar.gz
     dest: /var/lib/udapeople/
     owner: ubuntu
+    group: ubuntu
+    mode: u=rwx,g=rx,o=rx
+- name: "set application file permissions"
+  become: true
+  file: 
+    path: /var/lib/udapeople
+    owner: ubuntu
+    group: ubuntu
+    mode: u=rwx,g=rx,o=rx
+    recurse: yes
+- name: "copy package description so we can install dependencies"
+  become: true
+  copy:
+    src: ../../../../backend/package.json
+    dest: /var/lib/udapeople/package.json
+    owner: ubuntu
+    group: ubuntu
     mode: u=rw,g=r,o=r
+- name: "install application dependencies globally"
+  become: true
+  shell: |
+    cd /var/lib/udapeople
+    npm  install --global --production
+- name: "trigger application start"
+  shell: |
+    pm2 kill
+    pm2 start /var/lib/udapeople/main.js
+
+
+
   
