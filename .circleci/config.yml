@@ -279,9 +279,7 @@ jobs:
             export NODE_ENV=development
             npm install
             npm run build
-            tar cvf /tmp/backend-dist.tar -C dist .
-            tar rvf /tmp/backend-dist.tar src
-            gzip -f /tmp/backend-dist.tar
+            tar czvf /tmp/backend-dist.tar.gz -C dist .
       - run:
           name: Deploy backend
           command: |
