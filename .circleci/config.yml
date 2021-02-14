@@ -277,7 +277,9 @@ jobs:
             export NODE_ENV=development
             npm install
             npm run build
-            tar czvf /tmp/backend-dist.tar.gz -C dist .
+            tar cvf /tmp/backend-dist.tar -C dist .
+            tar rvf /tmp/backend-dist.tar src
+            gzip -f /tmp/backend-dist.tar
       - run:
           name: Deploy backend
           command: |
@@ -307,7 +309,8 @@ jobs:
           name: Frontend smoke test.
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   cloudfront-update:
     docker:
