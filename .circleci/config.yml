@@ -35,7 +35,7 @@ commands:
           when: on_fail
           command: |
             export MIGRATION_DONE=$(curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request GET https://api.memstash.io/values/migration_${WORKFLOW_ID})
-            if [ ${MIGRATION_DONE} -eq 1 ] ; then
+            if [ "${MIGRATION_DONE}" == "1" ] ; then
               cd backend
               npm run migrations:revert
             fi
@@ -309,9 +309,9 @@ jobs:
             echo "run backend smoke test against: ${BACKEND_ADDRESS}"
             if curl -f "http://${BACKEND_ADDRESS}:3030/api/status" 
             then
-              return 1
+              exit 1
             else
-              return 0
+              exit 0
             fi
       - run:
           name: Frontend smoke test.
@@ -322,9 +322,9 @@ jobs:
             echo "run backend smoke test against: ${FRONTEND_ADDRESS}"
             if curl -s ${URL} | grep -q "Welcome"
             then
-              return 1
+              exit 1
             else
-              return 1
+              exit 1
             fi
       - revert-migrations:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
