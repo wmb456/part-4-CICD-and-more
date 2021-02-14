@@ -289,7 +289,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:3.13
+      - image: amazon/aws-cli:2.1.22
     steps:
       - checkout
       - attach_workspace:
@@ -324,7 +324,7 @@ jobs:
             then
               return 1
             else
-              return 0
+              return 1
             fi
       - revert-migrations:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
@@ -337,13 +337,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
-          command: |
-            # your code here
-      - run:
           name: Update cloudfront distribution
           command: |
-            # your code here
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --tags project=udapeople projectenv=frontend-cloudfront \
+              --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"  
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
