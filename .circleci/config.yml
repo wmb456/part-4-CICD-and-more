@@ -308,6 +308,12 @@ jobs:
           command: |
             source $BASH_ENV
             echo "run backend smoke test against: ${BACKEND_ADDRESS}"
+            if curl -f "http://${BACKEND_ADDRESS}:3030/api/status" 
+            then
+              return 1
+            else
+              return 0
+            fi
       - run:
           name: Frontend smoke test.
           command: |
