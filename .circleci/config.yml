@@ -309,9 +309,9 @@ jobs:
             echo "run backend smoke test against: ${BACKEND_ADDRESS}"
             if curl -f "http://${BACKEND_ADDRESS}:3030/api/status" 
             then
-              exit 1
-            else
               exit 0
+            else
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -327,9 +327,13 @@ jobs:
               exit 1
             fi
       - revert-migrations:
-          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
+          WORKFLOW_ID: "c101d96"
+          # XXX CHANGE BACK 
+          #WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
       - destroy-environment:
-          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
+          WORKFLOW_ID: "c101d96"
+          # XXX CHANGE BACK 
+          #WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   cloudfront-update:
     docker:
