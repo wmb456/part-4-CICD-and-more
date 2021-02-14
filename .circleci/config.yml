@@ -13,9 +13,11 @@ commands:
       - run:
           name: Destroy environments
           when: on_fail
-          # force exit code 0 so both commands will be executed (in case one stack exists and the other not...)
+          # force exit code 0 so commands will be executed (in case any resource is missing...)
           command: |
-            echo "delete stacks... (term: $TERM)"
+            echo "explicitly delete files on s3 bucket..."
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive || true
+            echo "delete stacks..."
             aws cloudformation delete-stack --stack-name "udapeople-backend-${WORKFLOW_ID:0:7}" || true
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${WORKFLOW_ID:0:7}" || true
 
@@ -343,7 +345,8 @@ jobs:
           name: Update cloudfront distribution
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   cleanup:
     docker:
