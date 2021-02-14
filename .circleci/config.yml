@@ -164,11 +164,13 @@ jobs:
           command: |
             yum -y install tar gzip
             echo "[web]" > ~/inventory.txt
-            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}' >> ~/inventory.txt
+            aws ec2 describe-instances --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}' > ~/backend-address
+            cat ~/backend-address >> ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - inventory.txt
+            - backend-address
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
@@ -293,6 +295,8 @@ jobs:
       - image: alpine:3.13
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Install dependencies
           command: |
@@ -300,15 +304,25 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            # your code here
+            echo "export BACKEND_ADDRESS=$(cat /tmp/workspace/backend-address)" >> $BASH_ENV
       - run:
           name: Backend smoke test.
           command: |
-            # your code here
+            source $BASH_ENV
+            echo "run backend smoke test against: ${BACKEND_ADDRESS}"
       - run:
           name: Frontend smoke test.
           command: |
-            # your code here
+            export FRONTEND_ADDRESS=URL="http://udapeople-c101d96.s3-website.eu-central-1.amazonaws.com"
+            # XXX CHANGE BACK
+            #export FRONTEND_ADDRESS=URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
+            echo "run backend smoke test against: ${FRONTEND_ADDRESS}"
+            if curl -s ${URL} | grep -q "Welcome"
+            then
+              return 1
+            else
+              return 0
+            fi
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
