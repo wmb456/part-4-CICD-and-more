@@ -36,10 +36,14 @@
   shell: |
     cd /var/lib/udapeople
     npm  install --global --production
+- name: "kill old instances of udapeople"
+  ignore_errors: true
+  become: true
+  shell: | 
+    pm2 delete udapeople
 - name: "trigger application start"
   shell: |
-    pm2 kill
-    pm2 start /var/lib/udapeople/main.js
+    pm2 start -x --name udapeople /var/lib/udapeople/main.js
 
 
 
