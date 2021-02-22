@@ -340,6 +340,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install tar and gzip
+          command: |
+            yum -y install tar gzip
+      - run:
           name: Update cloudfront distribution
           command: |
             # save the last exported workflow ID so we can clean/remove the old stack in the next step
@@ -363,6 +367,10 @@ jobs:
     docker:
       - image: amazon/aws-cli:2.1.22
     steps:
+      - run:
+          name: Install tar and gzip
+          command: |
+            yum -y install tar gzip
       - attach_workspace:
           at: /tmp/workspace
       - run:
