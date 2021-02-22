@@ -16,4 +16,5 @@
     - install-nodejs-environment
     - install-pm2
     - configure-pm2-backend-udapeople
+    - configure-prometheus-node-exporter
 
