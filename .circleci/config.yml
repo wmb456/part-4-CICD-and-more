@@ -15,7 +15,8 @@ commands:
           when: on_fail
           # force exit code 0 so commands will be executed (in case any resource is missing...)
           command: |
-            echo "Acting on workflow ID: ${WORKFLOW_ID}"
+            export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
+            echo "Acting on workflow ID: << parameters.WORKFLOW_ID >>"
             echo "explicitly delete files on s3 bucket s3://udapeople-${WORKFLOW_ID:0:7}..."
             aws s3 rm s3://udapeople-${WORKFLOW_ID:0:7} --recursive || true
             echo "delete backend stack udapeople-backend-${WORKFLOW_ID:0:7}..."
@@ -36,6 +37,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
+            export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
             echo "Acting on workflow ID: ${WORKFLOW_ID}"
             export MIGRATION_DONE=$(curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request GET https://api.memstash.io/values/migration_${WORKFLOW_ID})
             echo "Pending migrations available: ${MIGRATION_DONE}"
