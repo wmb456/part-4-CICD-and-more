@@ -306,7 +306,9 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            echo "export BACKEND_ADDRESS=$(cat /tmp/workspace/backend-address)" >> $BASH_ENV
+            # TODO: change back
+            #echo "export BACKEND_ADDRESS=$(cat /tmp/workspace/backend-address)" >> $BASH_ENV
+            echo "export BACKEND_ADDRESS=ec2-18-185-82-216.eu-central-1.compute.amazonaws.com" >> $BASH_ENV
       - run:
           name: Backend smoke test.
           command: |
