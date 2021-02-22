@@ -348,13 +348,13 @@ jobs:
           command: |
             # save the last exported workflow ID so we can clean/remove the old stack in the next step
             export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
-            echo 'preserved OldWorkflowID: ${OldWorkflowID}'
+            echo "preserved OldWorkflowID: ${OldWorkflowID}"
             echo "${OldWorkflowID}" > ~/OldWorkflowID.txt
       
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --tags project=udapeople projectenv=frontend-cloudfront \
-              --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name "udapeople-cloudfront" \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"  
       - persist_to_workspace:
           root: ~/
@@ -389,11 +389,16 @@ jobs:
               exit 0
             fi
 
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            then
-              # your code here
-            fi
+            export WORKFLOW_ID=${OldWorkflowID}
+            echo "Acting on workflow ID: ${OldWorkflowID}"
+            echo "explicitly delete files on s3 bucket s3://udapeople-${WORKFLOW_ID:0:7}..."
+            aws s3 rm s3://udapeople-${WORKFLOW_ID:0:7} --recursive || true
             
+            echo "delete backend stack udapeople-backend-${WORKFLOW_ID:0:7}..."
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${WORKFLOW_ID:0:7}" || true
+            
+            echo "delete frontend stack udapeople-frontend-${WORKFLOW_ID:0:7}..."
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${WORKFLOW_ID:0:7}" || true
 
 workflows:
   default:
