@@ -316,7 +316,7 @@ jobs:
             echo "run backend smoke test against: ${FRONTEND_ADDRESS}"
             if curl -s ${FRONTEND_ADDRESS} | grep -q "Welcome"
             then
-              exit 1
+              exit 0
             else
               exit 1
             fi
