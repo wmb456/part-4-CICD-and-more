@@ -59,7 +59,6 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
-            exit 0
             npm install
             npm run build:prod
       - save_cache:
@@ -77,7 +76,6 @@ jobs:
           name: Back-end build
           command: |
             cd backend
-            exit 0
             npm install
             npm run build
       - save_cache:
@@ -88,40 +86,37 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [frontend-build-fresh]
       - run:
           name: Test frontend
           command: |
             cd frontend
-            exit 0
             npm run test:cov
   test-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Test backend
           command: |
             cd backend
-            exit 0
             npm run test:cov
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [frontend-build-fresh]
       - run:
           name: Scan frontend
           command: |
             cd frontend
-            exit 0
             npm audit --audit-level=critical
       - slack/notify:
           event: fail
@@ -130,14 +125,13 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Scan backend
           command: |
             cd backend
-            exit 0
             npm audit --audit-level=critical
       - slack/notify:
           event: fail
@@ -150,7 +144,6 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            exit 0
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople projectenv=backend \
@@ -159,7 +152,6 @@ jobs:
       - run:
           name: Ensure front-end infrastructure exist
           command: |
-            exit 0
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople projectenv=frontend \
@@ -210,7 +202,6 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            exit 0
             npm run migrations | tee /tmp/migrations.log
       - run:
           name: Send migration results to memstash
@@ -248,7 +239,7 @@ jobs:
             source $BASH_ENV
             echo "API_URL: ${API_URL}"
       - run: 
-          nam: run final frontend build - back in URL
+          name: run final frontend build - back in URL
           command: |
             source $BASH_ENV
             echo "API_URL: ${API_URL}"
@@ -261,9 +252,7 @@ jobs:
           name: Deploy frontend objects
           command: |
             cd frontend
-            aws s3 cp dist s3://udapeople-c101d96/ --recursive
-            # XXX CHANGE BACK
-            #aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
           WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
                     
@@ -308,9 +297,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            # TODO: change back
-            #echo "export BACKEND_ADDRESS=$(cat /tmp/workspace/backend-address)" >> $BASH_ENV
-            echo "export BACKEND_ADDRESS=ec2-18-185-82-216.eu-central-1.compute.amazonaws.com" >> $BASH_ENV
+            echo "export BACKEND_ADDRESS=$(cat /tmp/workspace/backend-address)" >> $BASH_ENV
       - run:
           name: Backend smoke test.
           command: |
@@ -325,9 +312,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            export FRONTEND_ADDRESS="http://udapeople-c101d96.s3-website.eu-central-1.amazonaws.com"
-            # XXX CHANGE BACK
-            #export FRONTEND_ADDRESS="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
+            export FRONTEND_ADDRESS="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
             echo "run backend smoke test against: ${FRONTEND_ADDRESS}"
             if curl -s ${FRONTEND_ADDRESS} | grep -q "Welcome"
             then
@@ -336,13 +321,9 @@ jobs:
               exit 1
             fi
       - revert-migrations:
-          WORKFLOW_ID: "c101d96"
-          # XXX CHANGE BACK 
-          #WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
       - destroy-environment:
-          WORKFLOW_ID: "c101d96"
-          # XXX CHANGE BACK 
-          #WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
+          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   cloudfront-update:
     docker:
@@ -383,7 +364,6 @@ jobs:
 workflows:
   default:
     jobs:
-      - smoke-test
       - build-frontend
       - build-backend
       - test-frontend:
@@ -407,8 +387,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      #- smoke-test:
-      #    requires: [deploy-backend, deploy-frontend]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
       - cleanup:
