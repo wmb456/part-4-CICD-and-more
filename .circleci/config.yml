@@ -98,30 +98,24 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # TODO Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Test backend
           command: |
-            # TODO Remove
-            exit 0
             cd backend
             npm run test:cov
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # TODO Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [frontend-build-fresh]
       - run:
           name: Scan frontend
           command: |
-            # TODO Remove
-            exit 0
             cd frontend
             npm audit --audit-level=critical
       - slack/notify:
@@ -131,15 +125,12 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # TODO Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Scan backend
           command: |
-            # TODO Remove
-            exit 0
             cd backend
             npm audit --audit-level=critical
       - slack/notify:
