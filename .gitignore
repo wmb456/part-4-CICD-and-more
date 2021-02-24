@@ -72,3 +72,4 @@ dist
 screenshots.txt
 notes.md
 inventory.testing.txt
+load.py
