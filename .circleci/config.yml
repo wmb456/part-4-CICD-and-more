@@ -174,7 +174,7 @@ jobs:
           command: |
             yum -y install tar gzip
             echo "[web]" > ~/inventory.txt
-            aws ec2 describe-instances --filters "Name=tag:backend_version,Values=${CIRCLE_WORKFLOW_ID:0:7}"= --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}' > ~/backend-address
+            aws ec2 describe-instances --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} Name=tag:project,Values=udapeople Name=tag:projectenv,Values=backend --query 'Reservations[].Instances[].PublicDnsName' --output text > ~/backend-address
             cat ~/backend-address >> ~/inventory.txt
             echo "Backend address: $(cat ~/backend-address)"
       - persist_to_workspace:
