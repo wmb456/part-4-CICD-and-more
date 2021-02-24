@@ -176,13 +176,19 @@ jobs:
             echo "[web]" > ~/inventory.txt
             aws ec2 describe-instances --filters "Name=tag:backend_version,Values=${CIRCLE_WORKFLOW_ID:0:7}"= --filters "Name=tag:project,Values=udapeople" --filters "Name=tag:projectenv,Values=backend" --query 'Reservations[].Instances[].PublicDnsName' --output text | awk '{ print $1}' > ~/backend-address
             cat ~/backend-address >> ~/inventory.txt
+            echo "Backend address: $(cat ~/backend-address)"
       - persist_to_workspace:
           root: ~/
           paths:
             - inventory.txt
             - backend-address
-      - destroy-environment:
-          WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
+      - run:
+          name: stop it. ToDo - remove it before flight.
+          command: |
+            exit 1
+
+      #- destroy-environment:
+          #WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID}"
 
   configure-infrastructure:
     docker:
