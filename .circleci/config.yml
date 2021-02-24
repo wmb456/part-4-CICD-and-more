@@ -86,45 +86,36 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # ToDo Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [frontend-build-fresh]
       - run:
           name: Test frontend
           command: |
-            # ToDo Remove
-            exit 0
             cd frontend
             npm run test:cov
   test-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # ToDo Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Test backend
           command: |
-            # ToDo Remove
-            exit 0
             cd backend
             npm run test:cov
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # ToDo Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [frontend-build-fresh]
       - run:
           name: Scan frontend
           command: |
-            # ToDo Remove
-            exit 0
             cd frontend
             npm audit --audit-level=critical
       - slack/notify:
@@ -134,15 +125,12 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # ToDo Remove
-      #- checkout
+      - checkout
       - restore_cache:
           keys: [backend-build-fresh]
       - run:
           name: Scan backend
           command: |
-            # ToDo Remove
-            exit 0
             cd backend
             npm audit --audit-level=critical
       - slack/notify:
