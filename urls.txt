@@ -1,7 +1,11 @@
 | No    | Entity      | URL                                                               |
 |-------|-------------|-------------------------------------------------------------------|
 | URL01 | github      | https://github.com/wmb456/part-4-CICD-and-more                    |
-| URL02 | S3 bucket   | http://udapeople-5cbde4c.s3-website.eu-central-1.amazonaws.com    |
+| URL02 | S3 bucket   | http://udapeople-2c043e2.s3-website.eu-central-1.amazonaws.com    |
 | URL03 | CF frontend | http://dopwjlxi9zi6x.cloudfront.net                               |
-| URL04 | backend     | ec2-18-184-131-46.eu-central-1.compute.amazonaws.com              |
+| URL04 | backend     | ec2-18-197-28-86.eu-central-1.compute.amazonaws.com               |
 | URL05 | Prometheus  | http://ec2-54-93-236-36.eu-central-1.compute.amazonaws.com:9090/  |
+
+
+Note on URL03: your browser might redirect you to https - and might block the call to the
+backend that only supports http.
